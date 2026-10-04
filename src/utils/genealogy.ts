@@ -1,4 +1,5 @@
 import { families } from "../data/families";
+import { lineageBoundaries } from "../data/lineageBoundaries";
 import { lineageSeeds } from "../data/lineageSeeds";
 import { parentRelationships } from "../data/parentRelationships";
 import { people } from "../data/people";
@@ -14,6 +15,7 @@ export const genealogyData: GenealogyDataset = {
   unions,
   siblingRelationships,
   lineageSeeds,
+  lineageBoundaries,
 };
 
 export const getGenealogyForFamily = (_familyId: string): GenealogyDataset => genealogyData;
@@ -43,9 +45,19 @@ export const getSiblings = (personId: string, data: GenealogyDataset = genealogy
     const candidateParents = parentIds(candidate.id, data);
     return candidate.id !== personId && parents.size > 0 && candidateParents.size === parents.size && [...parents].every((id) => candidateParents.has(id));
   });
-  const directIds = data.siblingRelationships.flatMap((relationship) =>
-    relationship.personIds.includes(personId) ? relationship.personIds.filter((id) => id !== personId) : [],
-  );
+  const directIds = new Set<string>();
+  const directQueue = [personId];
+  while (directQueue.length) {
+    const current = directQueue.shift()!;
+    data.siblingRelationships.forEach((relationship) => {
+      if (!relationship.personIds.includes(current)) return;
+      relationship.personIds.forEach((id) => {
+        if (id === personId || directIds.has(id)) return;
+        directIds.add(id);
+        directQueue.push(id);
+      });
+    });
+  }
   return resolve(new Set([...inferred.map((person) => person.id), ...directIds]), data);
 };
 
@@ -61,10 +73,12 @@ export const getHalfSiblings = (personId: string, data: GenealogyDataset = genea
 
 export const getPeopleInLineage = (familyId: string, data: GenealogyDataset = genealogyData): Person[] => {
   const seeds = data.lineageSeeds[familyId] ?? [];
+  const boundaries = new Set(data.lineageBoundaries?.[familyId] ?? []);
   const seen = new Set(seeds);
   const queue = [...seeds];
   while (queue.length) {
     const current = queue.shift()!;
+    if (boundaries.has(current)) continue;
     const related = data.parentRelationships.flatMap((relation) =>
       relation.parentId === current ? [relation.childId] : relation.childId === current ? [relation.parentId] : [],
     );

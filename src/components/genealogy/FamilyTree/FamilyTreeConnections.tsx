@@ -81,10 +81,16 @@ export function FamilyTreeConnections({ data, members, memberIds, positions, wid
     });
 
     const siblingPaths = deriveSiblingGroups(members, data).flatMap((group) => {
-      const siblings = group.personIds.map((id) => positions.get(id)).filter((item): item is GenealogyNodePosition => Boolean(item)).sort((a, b) => centerX(a) - centerX(b));
+      const siblings = group.personIds
+        .map((id) => ({ id, bounds: positions.get(id) }))
+        .filter((item): item is { id: string; bounds: GenealogyNodePosition } => Boolean(item.bounds))
+        .sort((a, b) => centerX(a.bounds) - centerX(b.bounds));
       if (siblings.length < 2) return [];
-      return siblings.slice(0, -1).flatMap((left, index) => {
-        const right = siblings[index + 1];
+      return siblings.slice(0, -1).flatMap((leftPerson, index) => {
+        const rightPerson = siblings[index + 1];
+        if (registeredPairs.has([leftPerson.id, rightPerson.id].sort().join("|"))) return [];
+        const left = leftPerson.bounds;
+        const right = rightPerson.bounds;
         const startX = left.left + left.width;
         const endX = right.left;
         if (endX <= startX) return [];

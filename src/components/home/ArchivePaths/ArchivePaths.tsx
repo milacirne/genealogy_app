@@ -1,28 +1,11 @@
 import { Link } from "react-router-dom";
+import heraldryIcon from "../../../assets/brasao-icon.png";
+import genealogyIcon from "../../../assets/genealogia-icon.png";
 import "./ArchivePaths.css";
 
-function HeraldrySymbol() {
-  return (
-    <svg aria-hidden="true" className="archive-path__symbol" viewBox="0 0 96 96">
-      <path d="M48 12 74 22v27c0 17-10 29-26 36-16-7-26-19-26-36V22z" />
-      <path d="M48 24v46M35 38h26M38 30l10 8 10-8" />
-      <circle cx="48" cy="49" r="5" />
-    </svg>
-  );
-}
-
-function GenealogySymbol() {
-  return (
-    <svg aria-hidden="true" className="archive-path__symbol" viewBox="0 0 96 96">
-      <path d="M48 76V49M48 49 27 30M48 49l21-19M27 30V18M69 30V18M48 49V24" />
-      <circle cx="27" cy="18" r="5" /><circle cx="48" cy="18" r="5" /><circle cx="69" cy="18" r="5" /><circle cx="48" cy="78" r="5" />
-    </svg>
-  );
-}
-
 const paths = [
-  { to: "/families", title: "Linhagens", description: "Explore as casas, brasões e histórias das famílias das sete Cortes.", action: "Explorar linhagens", symbol: <HeraldrySymbol /> },
-  { to: "/tree", title: "A Grande Árvore", description: "Percorra os laços de sangue que conectam famílias e gerações através de Prythian.", action: "Explorar a árvore", symbol: <GenealogySymbol /> },
+  { to: "/families", title: "Linhagens", description: "Explore as casas, brasões e histórias das famílias das sete Cortes.", action: "Explorar linhagens", symbol: <img aria-hidden="true" className="archive-path__symbol archive-path__symbol--image" src={heraldryIcon} alt="" /> },
+  { to: "/tree", title: "A Grande Árvore", description: "Percorra os laços de sangue que conectam famílias e gerações através de Prythian.", action: "Explorar a árvore", symbol: <img aria-hidden="true" className="archive-path__symbol archive-path__symbol--image" src={genealogyIcon} alt="" /> },
 ];
 
 export function ArchivePaths() {

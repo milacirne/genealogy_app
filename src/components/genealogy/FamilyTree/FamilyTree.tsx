@@ -14,7 +14,7 @@ const MIN_ZOOM = .6;
 const MAX_ZOOM = 1.6;
 const ZOOM_STEP = .05;
 const VIEWPORT_UI_SAFE_TOP = 72;
-const MOBILE_VIEWPORT_SAFE_LEFT = 20;
+const VIEWPORT_SAFE_LEFT = 20;
 const MOBILE_TREE_QUERY = "(max-width: 640px)";
 
 export function FamilyTree({ familyId, data, scaleMultiplier = 1 }: { familyId?: string; data: GenealogyDataset; scaleMultiplier?: number }) {
@@ -37,15 +37,14 @@ export function FamilyTree({ familyId, data, scaleMultiplier = 1 }: { familyId?:
     if (!element || !layout.positions.size) return;
     const bounds = [...layout.positions.values()];
     const left = Math.min(...bounds.map((item) => item.left));
-    const right = Math.max(...bounds.map((item) => item.left + item.width));
     const top = Math.min(...bounds.map((item) => item.top));
     const bottom = Math.max(...bounds.map((item) => item.top + item.height));
     const usableCenterY = VIEWPORT_UI_SAFE_TOP + (element.clientHeight - VIEWPORT_UI_SAFE_TOP) / 2;
     setPanOffset({
-      x: isMobile ? MOBILE_VIEWPORT_SAFE_LEFT - left * scale : element.clientWidth / 2 - ((left + right) / 2) * scale,
+      x: VIEWPORT_SAFE_LEFT - left * scale,
       y: usableCenterY - ((top + bottom) / 2) * scale,
     });
-  }, [effectiveZoom, isMobile, layout.positions]);
+  }, [effectiveZoom, layout.positions]);
 
   useLayoutEffect(() => {
     if (!layout.positions.size || hasCentered.current) return;

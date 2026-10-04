@@ -6,6 +6,7 @@
 .archive-path::after { right: .7rem; bottom: .7rem; }
 .archive-path__corner { position: absolute; top: .55rem; left: .55rem; width: .3rem; aspect-ratio: 1; border: 1px solid var(--silver); transform: rotate(45deg); }
 .archive-path__symbol { width: 4.2rem; height: 4.2rem; margin-bottom: .45rem; fill: none; stroke: var(--silver); stroke-width: 1.25; transition: stroke var(--transition), transform var(--transition); }
+.archive-path__symbol--image { width: 5.5rem; height: 5.5rem; margin-bottom: .25rem; object-fit: contain; }
 .archive-path__symbol circle { fill: var(--surface-solid); }
 .archive-path h2 { margin: 0; font-family: var(--font-display); font-size: 1.55rem; font-weight: 400; letter-spacing: .11em; text-transform: uppercase; }
 .archive-path p { max-width: 21rem; min-height: 3rem; margin: .55rem 0 .85rem; color: var(--text-muted); font-family: var(--font-display); font-size: .94rem; line-height: 1.55; }
