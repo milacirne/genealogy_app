@@ -2,5 +2,6 @@ export const lineageBoundaries: Partial<Record<string, string[]>> = {
   svalinn: ["ingrid-svalinn"],
   stern: ["eira-svalinn"],
   bjorn: ["nora-svalinn", "balder-svalinn"],
+  kunst: ["kaeden-aranthor"],
   aranthor: ["hazel-aranthor"],
 };
