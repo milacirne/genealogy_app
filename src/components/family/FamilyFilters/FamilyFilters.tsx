@@ -1,5 +1,5 @@
 import type { Court } from "../../../types/court";
-import { COURT_ORDER, getCourtDetails } from "../../../utils/court";
+import { LINEAGE_COURT_ORDER, getCourtDetails } from "../../../utils/court";
 import "./FamilyFilters.css";
 
 export type CourtFilter = Court | "all";
@@ -21,7 +21,7 @@ export function FamilyFilters({ query, selectedCourt, onQueryChange, onCourtChan
       </label>
       <div className="family-filters__courts" aria-label="Filtrar por Corte">
         <button className={selectedCourt === "all" ? "is-active" : ""} onClick={() => onCourtChange("all")} type="button">Todas</button>
-        {COURT_ORDER.map((court) => (
+        {LINEAGE_COURT_ORDER.map((court) => (
           <button className={selectedCourt === court ? "is-active" : ""} key={court} onClick={() => onCourtChange(court)} style={{ "--filter-color": getCourtDetails(court).color } as React.CSSProperties} type="button">
             {getCourtDetails(court).name}
           </button>

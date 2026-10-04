@@ -10,7 +10,9 @@ export const unions: Union[] = [
   { id: "eirik-solveig", personAId: "eirik-bjorn", personBId: "solveig-halvorsen" },
   { id: "balder-helga", personAId: "balder-svalinn", personBId: "helga-lindqvist" },
   { id: "lysandra-malrec", personAId: "lysandra-valeir", personBId: "malrec-kunst" },
-  { id: "hazel-kaeden", personAId: "hazel-aranthor", personBId: "kaeden-aranthor" },
+  { id: "hazel-kaeden", personAId: "kaeden-aranthor", personBId: "hazel-aranthor" },
   { id: "gerold-mareen", personAId: "gerold-kunst", personBId: "mareen-veyrath" },
   { id: "malakor-prya", personAId: "malakor-vorthos", personBId: "prya" },
+  { id: "manelaus-igrid", personAId: "manelaus-aranthor", personBId: "igrid-rhaevor" },
+  { id: "baelor-isobel", personAId: "baelor-aranthor", personBId: "isobel-elarion" },
 ];

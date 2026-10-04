@@ -149,8 +149,12 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     });
   });
 
+  const unitPartnerGap = (unit: FamilyUnit) =>
+    unit.personIds.includes("kaeden-aranthor") && unit.personIds.includes("hazel-aranthor")
+      ? 136
+      : GENEALOGY_LAYOUT.partnerGap;
   const unitWidth = (unit: FamilyUnit) => unit.personIds.length * GENEALOGY_LAYOUT.nodeWidth
-    + Math.max(0, unit.personIds.length - 1) * GENEALOGY_LAYOUT.partnerGap;
+    + Math.max(0, unit.personIds.length - 1) * unitPartnerGap(unit);
   const widthMemo = new Map<string, number>();
   const subtreeWidth = (unitId: string, trail = new Set<string>()): number => {
     if (widthMemo.has(unitId)) return widthMemo.get(unitId)!;
@@ -233,6 +237,9 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
   }
   fallbackRoots.forEach((unit, index) => {
     if (unit.personIds.length !== 2) return;
+    // A lone ancestral couple has no neighboring branch to face, so preserve
+    // the explicit personA/personB order declared by its union.
+    if (fallbackRoots.length === 1) return;
     const focusPerson = unit.personIds.find((id) => focusIds.has(id));
     if (!focusPerson) return;
     const partner = unit.personIds.find((id) => id !== focusPerson)!;
@@ -250,8 +257,20 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     else if (leftPerson) unit.personIds = [leftPerson, ...unit.personIds.filter((id) => id !== leftPerson)];
     else if (rightPerson) unit.personIds = [...unit.personIds.filter((id) => id !== rightPerson), rightPerson];
   });
+  const rootGap = (first: FamilyUnit, second: FamilyUnit) => {
+    const shareChild = [...parentsByChild.values()].some((parentIds) =>
+      parentIds.some((id) => first.personIds.includes(id)) && parentIds.some((id) => second.personIds.includes(id)));
+    if (shareChild) return GENEALOGY_LAYOUT.siblingGap * 5;
+    if (!focusFamilyId) {
+      const firstCourts = new Set(first.personIds.map((id) => data.people.find((person) => person.id === id)?.court).filter(Boolean));
+      const secondCourts = new Set(second.personIds.map((id) => data.people.find((person) => person.id === id)?.court).filter(Boolean));
+      const shareCourt = [...firstCourts].some((court) => secondCourts.has(court));
+      if (!shareCourt) return GENEALOGY_LAYOUT.siblingGap * 8;
+    }
+    return GENEALOGY_LAYOUT.siblingGap;
+  };
   const forestWidth = fallbackRoots.reduce((sum, unit) => sum + subtreeWidth(unit.id), 0)
-    + Math.max(0, fallbackRoots.length - 1) * GENEALOGY_LAYOUT.siblingGap;
+    + fallbackRoots.slice(0, -1).reduce((sum, unit, index) => sum + rootGap(unit, fallbackRoots[index + 1]), 0);
   const width = Math.max(GENEALOGY_LAYOUT.minimumCanvasWidth, forestWidth + GENEALOGY_LAYOUT.canvasPaddingX * 2);
   const positions = new Map<string, GenealogyNodePosition>();
   const placedUnits = new Set<string>();
@@ -271,7 +290,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     const subtree = subtreeWidth(unitId);
     const ownWidth = unitWidth(unit);
     let unitLeft = left + (subtree - ownWidth) / 2;
-    if (depth === 0) {
+    if (depth === 0 && !unit.childUnitIds.size) {
       const rootIndex = fallbackRoots.findIndex((root) => root.id === unitId);
       const hasSiblingOnLeft = directlyRelatedUnits(unit, fallbackRoots[rootIndex - 1]);
       const hasSiblingOnRight = directlyRelatedUnits(unit, fallbackRoots[rootIndex + 1]);
@@ -285,7 +304,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     }
     const top = GENEALOGY_LAYOUT.canvasPaddingTop + depth * (GENEALOGY_LAYOUT.nodeHeight + GENEALOGY_LAYOUT.generationGap);
     unit.personIds.forEach((personId, index) => positions.set(personId, {
-      left: unitLeft + index * (GENEALOGY_LAYOUT.nodeWidth + GENEALOGY_LAYOUT.partnerGap),
+      left: unitLeft + index * (GENEALOGY_LAYOUT.nodeWidth + unitPartnerGap(unit)),
       top,
       width: GENEALOGY_LAYOUT.nodeWidth,
       height: GENEALOGY_LAYOUT.nodeHeight,
@@ -302,9 +321,9 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
   };
 
   let rootLeft = (width - forestWidth) / 2;
-  fallbackRoots.forEach((root) => {
+  fallbackRoots.forEach((root, index) => {
     placeUnit(root.id, rootLeft, 0);
-    rootLeft += subtreeWidth(root.id) + GENEALOGY_LAYOUT.siblingGap;
+    rootLeft += subtreeWidth(root.id) + (fallbackRoots[index + 1] ? rootGap(root, fallbackRoots[index + 1]) : 0);
   });
 
   const shiftSubtree = (unitId: string, delta: number, shifted = new Set<string>()) => {
@@ -331,10 +350,16 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       .map(([childId]) => childId)
       .filter((childId) => unit.childUnitIds.has(unitByPerson.get(childId) ?? ""));
     const directChildUnitIds = new Set(directChildren.map((id) => unitByPerson.get(id)).filter((id): id is string => Boolean(id)));
-    const childPositions = [...directChildUnitIds]
-      .flatMap((childUnitId) => units.get(childUnitId)?.personIds ?? [])
+    const directChildPositions = directChildren
       .map((id) => positions.get(id))
       .filter((item): item is GenealogyNodePosition => Boolean(item));
+    const partneredChildUnits = [...directChildUnitIds].filter((childUnitId) => (units.get(childUnitId)?.personIds.length ?? 0) > 1).length;
+    const childPositions = directChildren.length === 1 || partneredChildUnits <= 1
+      ? directChildPositions
+      : [...directChildUnitIds]
+        .flatMap((childUnitId) => units.get(childUnitId)?.personIds ?? [])
+        .map((id) => positions.get(id))
+        .filter((item): item is GenealogyNodePosition => Boolean(item));
     if (ownPositions.length && childPositions.length && !edgeAlignedRoots.has(unitId)) {
       const sourceCenter = ownPositions.reduce((sum, item) => sum + item.left + item.width / 2, 0) / ownPositions.length;
       const childLeft = Math.min(...childPositions.map((item) => item.left));
@@ -345,6 +370,127 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     unit.childUnitIds.forEach(alignDescendants);
   };
   fallbackRoots.forEach((root) => alignDescendants(root.id));
+
+  parentsByChild.forEach((parentIds, childId) => {
+    const parentUnitIds = new Set(parentIds.map((id) => unitByPerson.get(id)).filter((id): id is string => Boolean(id)));
+    if (parentUnitIds.size < 2 && childId !== "kaeden-aranthor") return;
+    const parentPositions = parentIds.map((id) => positions.get(id)).filter((item): item is GenealogyNodePosition => Boolean(item));
+    const childPosition = positions.get(childId);
+    const childUnitId = unitByPerson.get(childId);
+    if (!parentPositions.length || !childPosition || !childUnitId) return;
+    const parentCenter = parentPositions.reduce((sum, position) => sum + position.left + position.width / 2, 0) / parentPositions.length;
+    const childCenter = childPosition.left + childPosition.width / 2;
+    shiftSubtree(childUnitId, parentCenter - childCenter);
+  });
+
+  const siblingPair = (first: FamilyUnit, second: FamilyUnit) => data.siblingRelationships.find(({ personIds }) =>
+    personIds.some((id) => first.personIds.includes(id)) && personIds.some((id) => second.personIds.includes(id)));
+  const compactedLeafRoots = new Set<string>();
+  fallbackRoots.forEach((anchor, anchorIndex) => {
+    if (!anchor.childUnitIds.size) return;
+    let rightUnit = anchor;
+    for (let index = anchorIndex - 1; index >= 0; index -= 1) {
+      const leftUnit = fallbackRoots[index];
+      if (compactedLeafRoots.has(leftUnit.id)) {
+        const relationship = siblingPair(leftUnit, rightUnit);
+        if (relationship) {
+          const leftPersonId = relationship.personIds.find((id) => leftUnit.personIds.includes(id));
+          const rightPersonId = relationship.personIds.find((id) => rightUnit.personIds.includes(id));
+          const leftPosition = leftPersonId ? positions.get(leftPersonId) : undefined;
+          const rightPosition = rightPersonId ? positions.get(rightPersonId) : undefined;
+          if (leftPosition && rightPosition) {
+            const delta = leftPosition.left + leftPosition.width + GENEALOGY_LAYOUT.siblingGap - rightPosition.left;
+            shiftSubtree(rightUnit.id, delta);
+          }
+        }
+        break;
+      }
+      if (leftUnit.childUnitIds.size) break;
+      const relationship = siblingPair(leftUnit, rightUnit);
+      if (!relationship) break;
+      const leftPersonId = relationship.personIds.find((id) => leftUnit.personIds.includes(id));
+      const rightPersonId = relationship.personIds.find((id) => rightUnit.personIds.includes(id));
+      const leftPosition = leftPersonId ? positions.get(leftPersonId) : undefined;
+      const rightPosition = rightPersonId ? positions.get(rightPersonId) : undefined;
+      if (!leftPosition || !rightPosition) break;
+      const delta = rightPosition.left - GENEALOGY_LAYOUT.siblingGap - (leftPosition.left + leftPosition.width);
+      shiftSubtree(leftUnit.id, delta);
+      compactedLeafRoots.add(leftUnit.id);
+      rightUnit = leftUnit;
+    }
+    let leftUnit = anchor;
+    for (let index = anchorIndex + 1; index < fallbackRoots.length; index += 1) {
+      const rightLeafUnit = fallbackRoots[index];
+      if (rightLeafUnit.childUnitIds.size || compactedLeafRoots.has(rightLeafUnit.id)) break;
+      const relationship = siblingPair(leftUnit, rightLeafUnit);
+      if (!relationship) break;
+      const leftPersonId = relationship.personIds.find((id) => leftUnit.personIds.includes(id));
+      const rightPersonId = relationship.personIds.find((id) => rightLeafUnit.personIds.includes(id));
+      const leftPosition = leftPersonId ? positions.get(leftPersonId) : undefined;
+      const rightPosition = rightPersonId ? positions.get(rightPersonId) : undefined;
+      if (!leftPosition || !rightPosition) break;
+      const delta = leftPosition.left + leftPosition.width + GENEALOGY_LAYOUT.siblingGap - rightPosition.left;
+      shiftSubtree(rightLeafUnit.id, delta);
+      compactedLeafRoots.add(rightLeafUnit.id);
+      leftUnit = rightLeafUnit;
+    }
+  });
+  const subtreePositions = (unitId: string, visited = new Set<string>()): GenealogyNodePosition[] => {
+    if (visited.has(unitId)) return [];
+    visited.add(unitId);
+    const unit = units.get(unitId);
+    if (!unit) return [];
+    return [
+      ...unit.personIds.map((id) => positions.get(id)).filter((position): position is GenealogyNodePosition => Boolean(position)),
+      ...[...unit.childUnitIds].flatMap((childId) => subtreePositions(childId, visited)),
+    ];
+  };
+  fallbackRoots.slice(0, -1).forEach((leftRoot, index) => {
+    const rightRoot = fallbackRoots[index + 1];
+    const relationship = siblingPair(leftRoot, rightRoot);
+    if (!relationship || !leftRoot.childUnitIds.size || !rightRoot.childUnitIds.size) return;
+    const leftPersonId = relationship.personIds.find((id) => leftRoot.personIds.includes(id));
+    const rightPersonId = relationship.personIds.find((id) => rightRoot.personIds.includes(id));
+    const leftPerson = leftPersonId ? positions.get(leftPersonId) : undefined;
+    const rightPerson = rightPersonId ? positions.get(rightPersonId) : undefined;
+    if (!leftPerson || !rightPerson) return;
+    const desiredDelta = leftPerson.left + leftPerson.width + GENEALOGY_LAYOUT.siblingGap - rightPerson.left;
+    const collisionDelta = subtreePositions(leftRoot.id).flatMap((leftPosition) =>
+      subtreePositions(rightRoot.id)
+        .filter((rightPosition) => rightPosition.top < leftPosition.top + leftPosition.height && rightPosition.top + rightPosition.height > leftPosition.top)
+        .map((rightPosition) => leftPosition.left + leftPosition.width + GENEALOGY_LAYOUT.siblingGap - rightPosition.left),
+    ).reduce((maximum, delta) => Math.max(maximum, delta), Number.NEGATIVE_INFINITY);
+    const delta = Math.max(desiredDelta, collisionDelta);
+    if (delta < 0) shiftSubtree(rightRoot.id, delta);
+  });
+
+  // Kaeden and Hazel join two branches with different depths. Anchor each
+  // spouse directly below their own parents so both ancestry trunks stay
+  // straight and the union expands naturally between the two families.
+  ["kaeden-aranthor", "hazel-aranthor"].forEach((childId) => {
+    const parentIds = parentsByChild.get(childId) ?? [];
+    const parentPositions = parentIds
+      .map((id) => positions.get(id))
+      .filter((position): position is GenealogyNodePosition => Boolean(position));
+    const childPosition = positions.get(childId);
+    if (parentPositions.length < 2 || !childPosition) return;
+    const parentCenter = parentPositions.reduce((sum, position) => sum + position.left + position.width / 2, 0) / parentPositions.length;
+    positions.set(childId, { ...childPosition, left: parentCenter - childPosition.width / 2 });
+  });
+
+  // Root compaction can also move Liora and Malakor after the first pass.
+  // Re-anchor Aisling without disturbing Liam and Lira's sibling layout.
+  ["aisling-kunst"].forEach((childId) => {
+    const parentIds = parentsByChild.get(childId) ?? [];
+    const parentPositions = parentIds
+      .map((id) => positions.get(id))
+      .filter((position): position is GenealogyNodePosition => Boolean(position));
+    const childPosition = positions.get(childId);
+    const childUnitId = unitByPerson.get(childId);
+    if (parentPositions.length < 2 || !childPosition || !childUnitId) return;
+    const parentCenter = parentPositions.reduce((sum, position) => sum + position.left + position.width / 2, 0) / parentPositions.length;
+    shiftSubtree(childUnitId, parentCenter - (childPosition.left + childPosition.width / 2));
+  });
 
   members.forEach((person) => {
     if (positions.has(person.id)) return;

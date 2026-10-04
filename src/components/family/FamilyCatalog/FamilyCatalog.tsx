@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Family } from "../../../types/family";
-import { COURT_ORDER, getCourtDetails } from "../../../utils/court";
+import { LINEAGE_COURT_ORDER, getCourtDetails } from "../../../utils/court";
 import { EmptyState } from "../../ui/EmptyState/EmptyState";
 import { FamilyCard } from "../FamilyCard/FamilyCard";
 import "./FamilyCatalog.css";
@@ -10,7 +10,7 @@ export function FamilyCatalog({ families }: { families: Family[] }) {
 
   return (
     <div className="family-catalog">
-      {COURT_ORDER.map((court) => {
+      {LINEAGE_COURT_ORDER.map((court) => {
         const courtFamilies = families.filter((family) => family.court === court);
         if (!courtFamilies.length) return null;
         const details = getCourtDetails(court);

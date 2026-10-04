@@ -35,4 +35,8 @@ export const parentRelationships: ParentChildRelationship[] = [
   { parentId: "prya", childId: "lira-vorthos" },
   { parentId: "malakor-vorthos", childId: "liam-vorthos" },
   { parentId: "prya", childId: "liam-vorthos" },
+  { parentId: "manelaus-aranthor", childId: "baelor-aranthor" },
+  { parentId: "igrid-rhaevor", childId: "baelor-aranthor" },
+  { parentId: "baelor-aranthor", childId: "kaeden-aranthor" },
+  { parentId: "isobel-elarion", childId: "kaeden-aranthor" },
 ];

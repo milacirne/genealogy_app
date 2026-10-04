@@ -7,6 +7,7 @@ interface CourtDetails {
 }
 
 export const COURT_ORDER: Court[] = ["dawn", "day", "summer", "winter", "night", "autumn", "spring"];
+export const LINEAGE_COURT_ORDER: Court[] = ["spring", "summer", "autumn", "winter", "dawn", "day", "night"];
 
 export const COURTS: Record<Court, CourtDetails> = {
   dawn: { name: "Crepuscular", adjective: "Crepuscular", color: "var(--court-dawn)" },

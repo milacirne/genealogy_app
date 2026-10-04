@@ -38,4 +38,8 @@ export const people: Person[] = [
   { id: "prya", firstName: "Prya", lastName: "", type: "npc", status: "alive", gender: "female", court: "night" },
   { id: "lira-vorthos", firstName: "Lira", lastName: "Vorthos", type: "npc", status: "alive", gender: "female", court: "night" },
   { id: "liam-vorthos", firstName: "Liam", lastName: "Vorthos", type: "npc", status: "alive", gender: "male", court: "night" },
+  { id: "manelaus-aranthor", firstName: "Manelaus", lastName: "Aranthor", type: "npc", status: "alive", gender: "male", court: "night" },
+  { id: "igrid-rhaevor", firstName: "Igrid", lastName: "Rhaevor", type: "npc", status: "alive", gender: "female", court: "night" },
+  { id: "baelor-aranthor", firstName: "Baelor", lastName: "Aranthor", type: "npc", status: "alive", gender: "male", court: "night" },
+  { id: "isobel-elarion", firstName: "Isobel", lastName: "Elarion", type: "npc", status: "alive", gender: "female", court: "night" },
 ];

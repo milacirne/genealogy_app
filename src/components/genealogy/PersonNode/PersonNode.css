@@ -19,6 +19,6 @@
 .person-node--playable .person-node__name { font-size: .86rem; font-weight: 600; }
 .person-node--npc { border-radius: .12rem; }
 .person-node__name { font-family: var(--font-display); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; }
-.person-node__deceased { color: var(--silver); }
+.person-node__deceased { display: inline-block; margin-left: .18rem; color: color-mix(in srgb, var(--silver) 82%, var(--text-primary)); font-size: 1.25em; font-weight: 600; line-height: .8; vertical-align: .02em; }
 .person-node--compact { min-width: 8rem; min-height: 3.2rem; }
 @media (max-width: 560px) { .person-node { min-width: 10.5rem; padding-inline: .65rem; } .person-node__name { font-size: .72rem; letter-spacing: .06em; } }

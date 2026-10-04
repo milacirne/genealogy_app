@@ -3,5 +3,5 @@ export const lineageSeeds: Partial<Record<string, string[]>> = {
   stern: ["corin-stern", "alaric-stern"],
   bjorn: ["mordred-bjorn", "ragnar-bjorn", "nora-svalinn", "balder-svalinn"],
   kunst: ["malrec-kunst", "gerold-kunst", "liora-kunst"],
-  aranthor: [],
+  aranthor: ["manelaus-aranthor", "hazel-aranthor"],
 };
