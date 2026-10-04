@@ -14,20 +14,25 @@ const MIN_ZOOM = .6;
 const MAX_ZOOM = 1.6;
 const ZOOM_STEP = .05;
 const VIEWPORT_UI_SAFE_TOP = 72;
+const MOBILE_TREE_QUERY = "(max-width: 640px)";
+
+const getResponsiveBaseScale = () => window.matchMedia(MOBILE_TREE_QUERY).matches ? .6 : 1;
 
 export function FamilyTree({ familyId, data }: { familyId: string; data: GenealogyDataset }) {
   const members = useMemo(() => getPeopleInLineage(familyId, data), [familyId, data]);
   const memberIds = useMemo(() => new Set(members.map((person) => person.id)), [members]);
   const layout = useMemo(() => buildGenealogyLayout(members, data), [members, data]);
   const [selected, setSelected] = useState<Person>();
+  const [baseScale] = useState(getResponsiveBaseScale);
   const [zoom, setZoom] = useState(1);
+  const effectiveZoom = baseScale * zoom;
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const viewport = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; panX: number; panY: number } | undefined>(undefined);
   const hasCentered = useRef(false);
 
-  const centerTree = useCallback((scale = zoom) => {
+  const centerTree = useCallback((scale = effectiveZoom) => {
     const element = viewport.current;
     if (!element || !layout.positions.size) return;
     const bounds = [...layout.positions.values()];
@@ -40,25 +45,26 @@ export function FamilyTree({ familyId, data }: { familyId: string; data: Genealo
       x: element.clientWidth / 2 - ((left + right) / 2) * scale,
       y: usableCenterY - ((top + bottom) / 2) * scale,
     });
-  }, [layout.positions, zoom]);
+  }, [effectiveZoom, layout.positions]);
 
   useLayoutEffect(() => {
     if (!layout.positions.size || hasCentered.current) return;
     hasCentered.current = true;
-    const frame = requestAnimationFrame(() => centerTree(zoom));
+    const frame = requestAnimationFrame(() => centerTree(effectiveZoom));
     return () => cancelAnimationFrame(frame);
-  }, [centerTree, layout.positions, zoom]);
+  }, [centerTree, effectiveZoom, layout.positions]);
 
   const changeZoom = (direction: -1 | 1) => {
     const element = viewport.current;
     const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number((zoom + direction * ZOOM_STEP).toFixed(2))));
     if (next === zoom) return;
     if (element) {
-      const logicalCenterX = (element.clientWidth / 2 - panOffset.x) / zoom;
-      const logicalCenterY = (element.clientHeight / 2 - panOffset.y) / zoom;
+      const nextEffectiveZoom = baseScale * next;
+      const logicalCenterX = (element.clientWidth / 2 - panOffset.x) / effectiveZoom;
+      const logicalCenterY = (element.clientHeight / 2 - panOffset.y) / effectiveZoom;
       setPanOffset({
-        x: element.clientWidth / 2 - logicalCenterX * next,
-        y: element.clientHeight / 2 - logicalCenterY * next,
+        x: element.clientWidth / 2 - logicalCenterX * nextEffectiveZoom,
+        y: element.clientHeight / 2 - logicalCenterY * nextEffectiveZoom,
       });
     }
     setZoom(next);
@@ -103,7 +109,7 @@ export function FamilyTree({ familyId, data }: { familyId: string; data: Genealo
         onPointerUp={endPan}
         onPointerCancel={endPan}
       >
-          <div className="family-tree__canvas" style={{ width: layout.width, height: layout.height, transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoom})` }}>
+          <div className="family-tree__canvas" style={{ width: layout.width, height: layout.height, transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${effectiveZoom})` }}>
             <FamilyTreeConnections data={data} members={members} memberIds={memberIds} positions={layout.positions} width={layout.width} height={layout.height} />
             <div className="family-tree__nodes">
               {members.map((person) => {
