@@ -23,5 +23,6 @@ export interface GenealogyDataset {
   siblingRelationships: SiblingRelationship[];
   lineageSeeds: Partial<Record<string, string[]>>;
   lineageBoundaries?: Partial<Record<string, string[]>>;
+  lineageRootOrder?: Partial<Record<string, string[]>>;
   isDemo?: boolean;
 }

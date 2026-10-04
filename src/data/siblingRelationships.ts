@@ -6,4 +6,6 @@ export const siblingRelationships: SiblingRelationship[] = [
   { personIds: ["mordred-bjorn", "ragnar-bjorn"], reason: "unknown-parentage" },
   { personIds: ["ingrid-svalinn", "nora-svalinn"], reason: "unknown-parentage" },
   { personIds: ["nora-svalinn", "balder-svalinn"], reason: "unknown-parentage" },
+  { personIds: ["malrec-kunst", "liora-kunst"], reason: "unknown-parentage" },
+  { personIds: ["gerold-kunst", "malrec-kunst"], reason: "unknown-parentage" },
 ];

@@ -91,6 +91,19 @@ export function FamilyTreeConnections({ data, members, memberIds, positions, wid
         if (registeredPairs.has([leftPerson.id, rightPerson.id].sort().join("|"))) return [];
         const left = leftPerson.bounds;
         const right = rightPerson.bounds;
+        const hasNodeBetween = [...positions.entries()].some(([personId, bounds]) => {
+          if (personId === leftPerson.id || personId === rightPerson.id) return false;
+          const overlapsSiblingRow = bounds.top < bottom(left) && bottom(bounds) > left.top;
+          return overlapsSiblingRow && bounds.left < right.left && bounds.left + bounds.width > left.left + left.width;
+        });
+        if (hasNodeBetween) {
+          const routeY = Math.max(12, Math.min(left.top, right.top) - 18);
+          return [{
+            id: `${group.id}:${index}`,
+            kind: group.kind,
+            d: `M ${centerX(left)} ${left.top} V ${routeY} H ${centerX(right)} V ${right.top}`,
+          }];
+        }
         const startX = left.left + left.width;
         const endX = right.left;
         if (endX <= startX) return [];

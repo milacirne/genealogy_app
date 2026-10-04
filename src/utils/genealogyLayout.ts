@@ -86,8 +86,9 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
     const childUnitId = unitByPerson.get(childId);
     if (!childUnitId) return;
     const parentUnitIds = new Set(parentIds.map((id) => unitByPerson.get(id)).filter((id): id is string => Boolean(id)));
-    parentUnitIds.forEach((parentUnitId) => {
-      if (parentUnitId === childUnitId) return;
+    const layoutParentUnitIds = [...parentUnitIds].filter((parentUnitId) => parentUnitId !== childUnitId);
+    const primaryParentUnitIds = layoutParentUnitIds.length > 1 ? layoutParentUnitIds.slice(0, 1) : layoutParentUnitIds;
+    primaryParentUnitIds.forEach((parentUnitId) => {
       units.get(parentUnitId)?.childUnitIds.add(childUnitId);
       const parents = incoming.get(childUnitId) ?? new Set<string>();
       parents.add(parentUnitId);
@@ -221,6 +222,15 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       else if (rightPerson) unit.personIds = [...unit.personIds.filter((id) => id !== rightPerson), rightPerson];
     });
   }
+  const preferredRootOrder = focusFamilyId
+    ? data.lineageRootOrder?.[focusFamilyId]
+    : Object.values(data.lineageRootOrder ?? {}).flatMap((personIds) => personIds ?? []);
+  if (preferredRootOrder?.length) {
+    const rankFor = (unit: FamilyUnit) => Math.min(...unit.personIds
+      .map((personId) => preferredRootOrder.indexOf(personId))
+      .filter((rank) => rank >= 0), Number.POSITIVE_INFINITY);
+    fallbackRoots = [...fallbackRoots].sort((first, second) => rankFor(first) - rankFor(second));
+  }
   fallbackRoots.forEach((unit, index) => {
     if (unit.personIds.length !== 2) return;
     const focusPerson = unit.personIds.find((id) => focusIds.has(id));
@@ -235,7 +245,8 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       ?.personIds.find((id) => unit.personIds.includes(id));
     const leftPerson = siblingInNeighbor(fallbackRoots[index - 1]);
     const rightPerson = siblingInNeighbor(fallbackRoots[index + 1]);
-    if (leftPerson && rightPerson && leftPerson !== rightPerson) unit.personIds = [leftPerson, rightPerson];
+    if (leftPerson && rightPerson && leftPerson === rightPerson) unit.personIds = [...unit.personIds.filter((id) => id !== rightPerson), rightPerson];
+    else if (leftPerson && rightPerson) unit.personIds = [leftPerson, rightPerson];
     else if (leftPerson) unit.personIds = [leftPerson, ...unit.personIds.filter((id) => id !== leftPerson)];
     else if (rightPerson) unit.personIds = [...unit.personIds.filter((id) => id !== rightPerson), rightPerson];
   });
@@ -244,6 +255,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
   const width = Math.max(GENEALOGY_LAYOUT.minimumCanvasWidth, forestWidth + GENEALOGY_LAYOUT.canvasPaddingX * 2);
   const positions = new Map<string, GenealogyNodePosition>();
   const placedUnits = new Set<string>();
+  const edgeAlignedRoots = new Set<string>();
   let maximumDepth = 0;
   const directlyRelatedUnits = (first?: FamilyUnit, second?: FamilyUnit) => {
     if (!first || !second) return false;
@@ -263,8 +275,13 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       const rootIndex = fallbackRoots.findIndex((root) => root.id === unitId);
       const hasSiblingOnLeft = directlyRelatedUnits(unit, fallbackRoots[rootIndex - 1]);
       const hasSiblingOnRight = directlyRelatedUnits(unit, fallbackRoots[rootIndex + 1]);
-      if (hasSiblingOnLeft && !hasSiblingOnRight) unitLeft = left;
-      else if (hasSiblingOnRight && !hasSiblingOnLeft) unitLeft = left + subtree - ownWidth;
+      if (hasSiblingOnLeft && !hasSiblingOnRight) {
+        unitLeft = left;
+        edgeAlignedRoots.add(unitId);
+      } else if (hasSiblingOnRight && !hasSiblingOnLeft) {
+        unitLeft = left + subtree - ownWidth;
+        edgeAlignedRoots.add(unitId);
+      }
     }
     const top = GENEALOGY_LAYOUT.canvasPaddingTop + depth * (GENEALOGY_LAYOUT.nodeHeight + GENEALOGY_LAYOUT.generationGap);
     unit.personIds.forEach((personId, index) => positions.set(personId, {
@@ -313,8 +330,12 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       .filter(([, parentIds]) => parentIds.some((parentId) => unitByPerson.get(parentId) === unitId))
       .map(([childId]) => childId)
       .filter((childId) => unit.childUnitIds.has(unitByPerson.get(childId) ?? ""));
-    const childPositions = directChildren.map((id) => positions.get(id)).filter((item): item is GenealogyNodePosition => Boolean(item));
-    if (ownPositions.length && childPositions.length) {
+    const directChildUnitIds = new Set(directChildren.map((id) => unitByPerson.get(id)).filter((id): id is string => Boolean(id)));
+    const childPositions = [...directChildUnitIds]
+      .flatMap((childUnitId) => units.get(childUnitId)?.personIds ?? [])
+      .map((id) => positions.get(id))
+      .filter((item): item is GenealogyNodePosition => Boolean(item));
+    if (ownPositions.length && childPositions.length && !edgeAlignedRoots.has(unitId)) {
       const sourceCenter = ownPositions.reduce((sum, item) => sum + item.left + item.width / 2, 0) / ownPositions.length;
       const childLeft = Math.min(...childPositions.map((item) => item.left));
       const childRight = Math.max(...childPositions.map((item) => item.left + item.width));

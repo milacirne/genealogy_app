@@ -7,6 +7,7 @@ import galienArtwork from "../assets/galien-brasao.png";
 import welkinArtwork from "../assets/welkin-brasao.png";
 import kunstArtwork from "../assets/kunst-brasao.png";
 import svalinnArtwork from "../assets/svalinn-brasao.png";
+import aranthorArtwork from "../assets/aranthor-brasao.png";
 
 export const families: Family[] = [
   {
@@ -97,6 +98,44 @@ export const families: Family[] = [
       "Nas brumas de tempos imemoriais, quando os primeiros Grão-Senhores da Corte Noturna ainda idealizavam um refúgio para os sonhadores, a linhagem Kunst já tecia os fios da beleza nas pedras de Velaris. Esta família é a alma do Arco-Íris, o quarteirão onde a luz das estrelas se converte em cor e som, sendo os primeiros a esculpir a identidade lúdica da cidade sob as sombras protetoras das montanhas. Para um Kunst, a magia não se manifesta apenas em escudos mentais ou sombras, mas na vibração de uma corda de alaúde ou na precisão de um pincel que captura a essência de Ramiel; cada membro nasce com o dom do místico, carregando em seu sangue a herança de quem aprendeu a ler as constelações não para prever o futuro, mas para imortalizá-las em palcos e telas.",
       "Enquanto outras casas nobres acumulam baús de ouro e gemas brutas, os Kunst consideram-se os mais ricos de Prythian através de uma moeda diferente: a emoção pura. Seu verdadeiro tesouro reside no silêncio reverente que precede o último ato de uma peça nos cinco grandes teatros, no suspiro de quem se perde em uma galeria ou nas lágrimas vertidas por uma melodia que evoca eras esquecidas. Eles vivem pela arte e para a cultura, mantendo o Arco-Íris vibrante e aquecido por feitiços de hospitalidade mesmo nas noites mais frias, comprometidos com a visão de que a perícia artística é o único bálsamo capaz de curar as feridas da alma e sustentar o espírito feérico diante da imortalidade.",
       "Contudo, um fardo pesado descansa sobre os ombros desta estirpe: o isolamento forçado por milênios de segredos defensivos. A linhagem Kunst sofre profundamente com o decreto que mantém Velaris oculta do resto do mundo, privando Prythian de sentir a pulsação de sua criatividade e de suas inovações lúdicas. Muitos de seus membros viajam incógnitos pelas outras Cortes em busca de inspiração, percorrendo desde as florestas da Primaveril até as cidades relojoeiras da Crepuscular, apenas para retornar e retratar essas maravilhas em um santuário que ninguém além de seus vizinhos verá. Eles anseiam pelo dia em que as proteções caiam e a vibração do Arco-Íris possa, enfim, brilhar sobre todas as terras mortais e imortais, transformando o mundo inteiro em uma extensão de seu palco eterno.",
+    ],
+  },
+  {
+    id: "aranthor",
+    name: "Aranthor",
+    court: "night",
+    crest: aranthorArtwork,
+    artwork: aranthorArtwork,
+    description: "Uma antiga e reclusa casa da Corte dos Pesadelos, cuja fortuna, arquitetura monumental e arquivo secreto preservam aquilo que o mundo tentou esquecer.",
+    nameMeaning: "A origem do nome não possui registros ou conhecimento sólido de seu significado. A literatura moderna o traduz como “o sangue mais espesso”.",
+    heroMeaning: "A origem do nome permanece incerta; a literatura moderna o traduz como ‘o sangue mais espesso’.",
+    motto: "O sangue guarda o que o mundo esquece.",
+    crestDescription: "Um escudo negro com o desenho de um olho fechado em seu centro, cercado por um triângulo que representa os três pilares dos Aranthor: sangue, lealdade e tradição. O vermelho aparece apenas em pinceladas sobre o negro, representando o destaque em meio à escuridão. Sobre ele, o lema.",
+    location: "Corte dos Pesadelos. A residência ancestral da família é Vespertine, uma construção de estética neoclássica monumental, com grandes salões, simetria rigorosa, pé-direito muito alto, escadarias imponentes e interiores extremamente ornamentados. Sua decoração mistura mármores, madeiras trabalhadas, dourados, espelhos, lustres, tapeçarias, pinturas e mobiliário aristocrático, criando uma sensação de riqueza antiga e solene, sem assumir uma estética excessivamente barroca.",
+    heroLocation: "Vespertine · Corte dos Pesadelos",
+    responsiblePlayer: "Manu",
+    history: [
+      "Há famílias que constroem seu poder sendo vistas.",
+      "Os Aranthor construíram o seu aprendendo a não serem vistos.",
+      "A origem da família é incerta até mesmo para os estudiosos da Corte dos Pesadelos. Os registros mais antigos que carregam seu nome são incompletos, frequentemente encontrados em documentos que não deveriam existir ou em arquivos que desapareceram pouco depois de serem descobertos. Há quem diga que os Aranthor já estavam presentes nos círculos mais antigos da Corte antes mesmo de ela possuir a forma que hoje conhecemos.",
+      "Naturalmente, a família nunca confirmou.",
+      "Sua riqueza começou com a arquitetura. Durante gerações, os Aranthor se tornaram responsáveis por algumas das construções mais importantes da Corte: residências nobres, fortalezas, bibliotecas, criptas e estruturas destinadas a guardar aquilo que não poderia ser exposto. Não só foram responsáveis pela construção maravilhosa da Corte dos Pesadelos, como muitas outras maravilhas arquitetônicas encomendadas por Prythian.",
+      "Os Aranthor não são expostos politicamente. O poder e influência vem da fortuna exacerbada que construíram ao longo dos séculos, a maior parte traduzida através de objetos, peças de arte, construções e, por que não, documentos. Seu acervo particular cresceu até se tornar algo muito maior do que uma biblioteca familiar: um arquivo secreto da própria Corte.",
+      "Alguns desses documentos poderiam alterar a história da Corte se fossem revelados.",
+      "E os Aranthor sabem disso.",
+      "A família não utiliza esse conhecimento de maneira aberta. Não fazem ameaças, não anunciam seus segredos e raramente interferem diretamente nos conflitos da nobreza. Seu poder é muito mais sutil. Das sombras.",
+      "Eles simplesmente sabem.",
+      "A família é reclusa, raramente vista em eventos de grande porte, e demonstram um tipo de conexão interna tão profunda que chegou a gerar boatos nunca confirmados sobre casamentos dentro do próprio sangue. A construção de um laço profundo, passada de geração em geração é, na verdade, a maior fortaleza do grupo: a união do sangue. O conhecimento que não pertence ao indivíduo. Pertence aos seus.",
+      "Por isso, os Aranthor são poucos.",
+      "Cada geração produz apenas um herdeiro destinado a carregar oficialmente o nome, o patrimônio e, principalmente, o arquivo da família. Desde cedo, essa criança aprende que sua maior herança não será ouro ou propriedades, mas tudo aquilo que os Aranthor sabem.",
+      "A família inteira participa dessa educação.",
+      "Os mais velhos transmitem histórias que não estão escritas em nenhum livro. Os objetos passam de geração em geração. Segredos são revelados apenas quando um Aranthor possui idade suficiente para compreendê-los. Algumas informações são tão antigas que ninguém sabe mais quem as descobriu.",
+      "Talvez seja essa a verdadeira razão pela qual os Aranthor são tão próximos.",
+      "Eles não compartilham apenas sangue.",
+      "Compartilham conhecimento.",
+      "Existe entre eles uma espécie de pacto silencioso: enquanto existir um Aranthor, aquilo que a família conhece não será perdido. É daí que vem seu lema: ‘O sangue guarda o que o mundo esquece.’",
+      "Para os outros, é apenas uma frase antiga.",
+      "Para os Aranthor, é uma promessa. Uma feita em sangue.",
     ],
   },
   // Mocks temporários para demonstrar a paleta das demais Cortes.

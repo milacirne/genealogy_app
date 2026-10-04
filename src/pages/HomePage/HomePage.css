@@ -6,6 +6,5 @@
 .hero__ornament span { width: .45rem; aspect-ratio: 1; border: 1px solid currentColor; transform: rotate(45deg); background: rgba(255,255,255,.7); box-shadow: 0 0 12px rgba(142,124,195,.18); }
 .hero__eyebrow { margin: .7rem 0 .35rem; color: var(--text-muted); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; }
 .hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2.35rem, 5vw, 4.25rem); font-weight: 400; letter-spacing: .035em; line-height: 1; }
-.hero__subtitle { max-width: 34rem; margin: .65rem auto 1rem; color: var(--text-muted); font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.5; }
-.hero__controls { position: relative; z-index: 2; display: flex; justify-content: center; width: min(100%, 31rem); }
+.hero__subtitle { max-width: 34rem; margin: .65rem auto 0; color: var(--text-muted); font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.5; }
 @media (max-width: 640px) { .hero { padding-top: 1.75rem; } }

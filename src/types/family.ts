@@ -8,8 +8,11 @@ export interface Family {
   artwork?: string;
   description?: string;
   nameMeaning?: string;
+  heroMeaning?: string;
   motto?: string;
   crestDescription?: string;
   location?: string;
+  heroLocation?: string;
+  responsiblePlayer?: string;
   history?: string[];
 }

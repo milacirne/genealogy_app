@@ -5,7 +5,7 @@ import "./FamilyHeader.css";
 
 export function FamilyHeader({ family }: { family: Family }) {
   const court = getCourtDetails(family.court);
-  const nameMeaningParagraphs = family.nameMeaning?.split("\n\n");
+  const nameMeaningParagraphs = (family.heroMeaning ?? family.nameMeaning)?.split("\n\n");
   const style = {
     "--family-accent": court.color,
     "--family-artwork": family.artwork ? `url(${family.artwork})` : "none",
@@ -16,6 +16,7 @@ export function FamilyHeader({ family }: { family: Family }) {
         <p className="family-header__court">Corte {court.name}</p>
         <h1>{family.name}</h1>
         {family.motto && <blockquote>“{family.motto}”</blockquote>}
+        {family.heroLocation && <p className="family-header__location">{family.heroLocation}</p>}
         {nameMeaningParagraphs?.length && (
           <div className="family-header__meaning">
             {nameMeaningParagraphs.map((paragraph, index) => <p key={`${family.id}-meaning-${index}`}>{paragraph}</p>)}

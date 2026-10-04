@@ -1,5 +1,6 @@
 import { families } from "../data/families";
 import { lineageBoundaries } from "../data/lineageBoundaries";
+import { lineageRootOrder } from "../data/lineageRootOrder";
 import { lineageSeeds } from "../data/lineageSeeds";
 import { parentRelationships } from "../data/parentRelationships";
 import { people } from "../data/people";
@@ -16,6 +17,7 @@ export const genealogyData: GenealogyDataset = {
   siblingRelationships,
   lineageSeeds,
   lineageBoundaries,
+  lineageRootOrder,
 };
 
 export const getGenealogyForFamily = (_familyId: string): GenealogyDataset => genealogyData;
