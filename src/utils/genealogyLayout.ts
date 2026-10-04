@@ -127,7 +127,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
         while (current) {
           ordered.push(current);
           visited.add(current.id);
-          const nextId = [...(adjacency.get(current.id) ?? [])].find((id) => !visited.has(id));
+          const nextId: string | undefined = [...(adjacency.get(current.id) ?? [])].find((id) => !visited.has(id));
           current = nextId ? units.get(nextId) : undefined;
         }
         childUnits = [...ordered, ...childUnits.filter((unit) => !visited.has(unit.id))];
@@ -198,7 +198,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, 
       while (current) {
         ordered.push(current);
         globallyVisited.add(current.id);
-        const nextId = [...(adjacency.get(current.id) ?? [])].find((id) => !globallyVisited.has(id));
+        const nextId: string | undefined = [...(adjacency.get(current.id) ?? [])].find((id) => !globallyVisited.has(id));
         current = nextId ? units.get(nextId) : undefined;
       }
       component.filter((unit) => !globallyVisited.has(unit.id)).forEach((unit) => {
