@@ -1,0 +1,11 @@
+.hero { position: relative; display: flex; flex-direction: column; align-items: center; padding: clamp(1.8rem, 4vw, 3rem) 0 clamp(1.4rem, 3vw, 2.15rem); text-align: center; }
+.hero::before { content: ""; position: absolute; top: .65rem; left: 50%; width: min(82vw, 34rem); height: 12rem; border: 1px solid rgba(159,154,169,.12); border-radius: 50%; transform: translateX(-50%); mask-image: linear-gradient(to bottom, black, transparent 78%); pointer-events: none; }
+.hero__ornament { display: flex; align-items: center; gap: .8rem; color: var(--silver); }
+.hero__ornament::before, .hero__ornament::after { content: ""; width: 3rem; height: 1px; background: linear-gradient(90deg, transparent, var(--silver-light)); }
+.hero__ornament::after { transform: scaleX(-1); }
+.hero__ornament span { width: .45rem; aspect-ratio: 1; border: 1px solid currentColor; transform: rotate(45deg); background: rgba(255,255,255,.7); box-shadow: 0 0 12px rgba(142,124,195,.18); }
+.hero__eyebrow { margin: .7rem 0 .35rem; color: var(--text-muted); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; }
+.hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2.35rem, 5vw, 4.25rem); font-weight: 400; letter-spacing: .035em; line-height: 1; }
+.hero__subtitle { max-width: 34rem; margin: .65rem auto 1rem; color: var(--text-muted); font-family: var(--font-display); font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.5; }
+.hero__controls { position: relative; z-index: 2; display: flex; justify-content: center; width: min(100%, 31rem); }
+@media (max-width: 640px) { .hero { padding-top: 1.75rem; } }

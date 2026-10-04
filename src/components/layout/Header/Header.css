@@ -1,0 +1,9 @@
+.site-header { position: sticky; top: 0; z-index: 10; width: 100%; border-bottom: 1px solid var(--border); background: rgba(248,247,251,.76); backdrop-filter: blur(14px); }
+.site-header__inner { display: flex; align-items: center; justify-content: space-between; width: min(100%, var(--content-width)); min-height: 4.125rem; margin: 0 auto; padding: .55rem var(--page-padding); }
+.site-mark { display: flex; align-items: center; gap: .65rem; color: var(--text); cursor: pointer; text-decoration: none; letter-spacing: .12em; text-transform: uppercase; }
+.site-mark__sigil { display: grid; place-items: center; width: 1.65rem; aspect-ratio: 1; border: 1px solid var(--silver); transform: rotate(45deg); font-family: var(--font-display); font-size: .66rem; background: rgba(255,255,255,.45); }
+.site-mark__sigil::first-letter { transform: rotate(-45deg); }
+.site-mark strong, .site-mark small { display: block; }
+.site-mark strong { font-family: var(--font-display); font-size: .82rem; font-weight: 500; }
+.site-mark small { margin-top: .2rem; color: var(--text-muted); font-size: .58rem; }
+@media (max-width: 700px) { .site-header__inner { min-height: 3.9rem; gap: .75rem; } .site-mark small { display: none; } }

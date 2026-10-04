@@ -1,0 +1,10 @@
+.person-details { position: absolute; top: .85rem; right: .85rem; z-index: 4; width: min(20rem, calc(100% - 1.7rem)); padding: 1.25rem; border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--surface-solid) 96%, transparent); box-shadow: 0 12px 35px rgba(52,49,61,.12); backdrop-filter: blur(10px); }
+.person-details__close { position: absolute; top: .55rem; right: .65rem; border: 0; background: none; color: var(--text-muted); font-size: 1.25rem; cursor: pointer; }
+.person-details__eyebrow { color: var(--silver); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; }
+.person-details h3 { margin: .3rem 1.5rem .15rem 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 400; text-transform: uppercase; }
+.person-details > p { margin: 0 0 1rem; color: var(--text-muted); font-size: .7rem; }
+.person-details dl { display: grid; gap: .65rem; margin: 0; }
+.person-details dl div { display: grid; grid-template-columns: 4.2rem 1fr; gap: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); }
+.person-details dt { color: var(--silver); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; }
+.person-details dd { margin: 0; color: var(--text-secondary); font-family: var(--font-display); font-size: .82rem; }
+@media (max-width: 640px) { .person-details { position: fixed; top: auto; right: 0; bottom: 0; left: 0; width: 100%; border-width: 1px 0 0; } }

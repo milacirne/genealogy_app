@@ -1,0 +1,6 @@
+.family-catalog { display: grid; gap: 2.5rem; padding-bottom: 4rem; }
+.family-catalog__court > header { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1rem; margin-bottom: .85rem; }
+.family-catalog__court h2 { margin: 0; color: color-mix(in srgb, var(--court-accent) 62%, var(--text-primary)); font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.family-catalog__court header span { height: 1px; background: linear-gradient(90deg, color-mix(in srgb, var(--court-accent) 60%, transparent), transparent); }
+.family-catalog__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: .8rem; }
+@media (max-width: 760px) { .family-catalog__grid { grid-template-columns: 1fr; } }

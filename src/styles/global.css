@@ -1,0 +1,37 @@
+@import "./variables.css";
+@import "./reset.css";
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--scrollbar-thumb);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body { min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 14% 12%, rgba(163,212,240,.2), transparent 22rem), radial-gradient(circle at 84% 18%, rgba(142,124,195,.12), transparent 24rem), radial-gradient(circle at 48% 75%, rgba(255,255,255,.9), transparent 30rem), var(--background); color: var(--text); font-family: var(--font-body); font-size: 1rem; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; opacity: .45; background-image: radial-gradient(circle, rgba(113,108,124,.24) 0 1px, transparent 1.5px), linear-gradient(115deg, transparent 47%, rgba(159,154,169,.07) 49%, transparent 51%); background-position: 0 0, center; background-size: 71px 71px, 100% 100%; pointer-events: none; }
+::selection { background: var(--court-night); color: white; }
+:focus-visible { outline: 2px solid var(--silver); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

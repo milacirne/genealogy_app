@@ -1,0 +1,10 @@
+.family-header { --family-accent: var(--silver); --family-artwork: none; position: relative; display: flex; align-items: center; min-height: clamp(12rem, 24vw, 16rem); margin: .6rem 0 1.4rem; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+.family-header::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(254,254,255,.98) 8%, rgba(254,254,255,.88) 48%, rgba(254,254,255,.18)), var(--family-artwork); background-position: center; background-size: cover; }
+.family-header__content { position: relative; width: min(36rem, 70%); padding: 1.35rem clamp(1.25rem, 4vw, 3rem); }
+.family-header__court { margin: 0; color: color-mix(in srgb, var(--family-accent) 68%, var(--text-primary)); font-size: .65rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+.family-header h1 { margin: .15rem 0 .35rem; font-family: var(--font-display); font-size: clamp(2.25rem, 5vw, 4rem); font-weight: 400; letter-spacing: .12em; line-height: 1; text-transform: uppercase; }
+.family-header blockquote { margin: 0; color: var(--text-secondary); font-family: var(--font-display); font-size: .98rem; font-style: italic; }
+.family-header__meaning { max-width: 31rem; margin-top: .95rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+.family-header__meaning p { margin: 0; color: var(--text-muted); font-family: var(--font-display); font-size: .78rem; line-height: 1.55; }
+.family-header__meaning p + p { margin-top: .45rem; }
+@media (max-width: 600px) { .family-header { min-height: 15rem; } .family-header::before { background-image: linear-gradient(90deg, rgba(254,254,255,.97), rgba(254,254,255,.78)), var(--family-artwork); background-position: 62% center; } .family-header__content { width: 100%; padding-block: 1.5rem; } .family-header__meaning { max-width: 90%; } }

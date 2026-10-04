@@ -1,0 +1,5 @@
+.navigation { display: flex; gap: clamp(.75rem, 3vw, 2.5rem); }
+.navigation a { position: relative; padding: .35rem 0; color: var(--text-muted); text-decoration: none; letter-spacing: .08em; font-size: .72rem; transition: color var(--transition); }
+.navigation a:hover, .navigation a.active { color: var(--text); }
+.navigation a.active::after { content: ""; position: absolute; right: 0; bottom: 0; left: 0; height: 1px; background: var(--silver); }
+@media (max-width: 520px) { .navigation { flex-wrap: wrap; justify-content: flex-end; gap: .35rem 1rem; } .navigation a { font-size: .6rem; } }

@@ -1,0 +1,2 @@
+.family-page { width: min(100%, 68rem); margin: 0 auto; }
+.family-page--missing { padding-top: clamp(3rem, 8vw, 6rem); }

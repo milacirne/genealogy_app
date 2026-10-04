@@ -1,0 +1,1 @@
+.page-container { width: min(100%, var(--content-width)); margin: 0 auto; padding-inline: var(--page-padding); }

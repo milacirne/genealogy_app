@@ -1,0 +1,5 @@
+.placeholder-page { display: grid; place-items: center; min-height: 70vh; text-align: center; }
+.placeholder-page span { color: var(--silver); font-size: .65rem; letter-spacing: .25em; text-transform: uppercase; }
+.placeholder-page h1 { margin: .8rem 0; font-family: var(--font-display); font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 400; }
+.placeholder-page p { max-width: 32rem; color: var(--text-muted); }
+.placeholder-page a { margin-top: 1rem; padding-bottom: .4rem; border-bottom: 1px solid var(--silver); color: var(--text); font-size: .7rem; letter-spacing: .16em; text-decoration: none; text-transform: uppercase; }

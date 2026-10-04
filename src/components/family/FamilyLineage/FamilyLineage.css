@@ -1,0 +1,7 @@
+.family-lineage { padding: 1.15rem 0 2.75rem; border-top: 1px solid var(--border); }
+.family-record-section__heading { display: grid; grid-template-columns: 1fr auto; align-items: end; margin-bottom: 1rem; }
+.family-record-section__heading span { grid-column: 1 / -1; color: var(--silver); font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; }
+.family-record-section__heading h2 { margin: .15rem 0 0; font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 400; }
+.family-record-section__heading p { max-width: 29rem; margin: 0 0 .25rem; color: var(--text-muted); font-family: var(--font-display); font-size: .85rem; text-align: right; }
+.family-lineage > .empty-state { min-height: 15rem; }
+@media (max-width: 700px) { .family-record-section__heading { display: block; } .family-record-section__heading p { margin-top: .4rem; text-align: left; } }
