@@ -11,10 +11,16 @@ export interface Union {
   personBId: string;
 }
 
+export interface SiblingRelationship {
+  personIds: [string, string];
+  reason: "unknown-parentage";
+}
+
 export interface GenealogyDataset {
   people: Person[];
   parentRelationships: ParentChildRelationship[];
   unions: Union[];
+  siblingRelationships: SiblingRelationship[];
   lineageSeeds: Partial<Record<string, string[]>>;
   isDemo?: boolean;
 }

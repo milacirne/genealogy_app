@@ -24,6 +24,8 @@
   --genealogy-line: rgba(108, 101, 124, 0.32);
   --genealogy-line-width: 1px;
   --genealogy-sibling-dash: 4 5;
+  --gender-female: #cf789b;
+  --gender-male: #648fbe;
   --scrollbar-thumb: rgba(151, 143, 169, 0.45);
   --scrollbar-thumb-hover: rgba(130, 120, 151, 0.65);
   --font-display: Georgia, "Times New Roman", serif;

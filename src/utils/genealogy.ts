@@ -1,7 +1,8 @@
-import { DEMO_GENEALOGY } from "../data/demoGenealogy";
 import { families } from "../data/families";
+import { lineageSeeds } from "../data/lineageSeeds";
 import { parentRelationships } from "../data/parentRelationships";
 import { people } from "../data/people";
+import { siblingRelationships } from "../data/siblingRelationships";
 import { unions } from "../data/unions";
 import type { Family } from "../types/family";
 import type { GenealogyDataset } from "../types/genealogy";
@@ -11,11 +12,11 @@ export const genealogyData: GenealogyDataset = {
   people,
   parentRelationships,
   unions,
-  lineageSeeds: {},
+  siblingRelationships,
+  lineageSeeds,
 };
 
-export const getGenealogyForFamily = (familyId: string): GenealogyDataset =>
-  DEMO_GENEALOGY.lineageSeeds[familyId] ? DEMO_GENEALOGY : genealogyData;
+export const getGenealogyForFamily = (_familyId: string): GenealogyDataset => genealogyData;
 
 const personMap = (data: GenealogyDataset) => new Map(data.people.map((person) => [person.id, person]));
 
@@ -38,10 +39,14 @@ const parentIds = (personId: string, data: GenealogyDataset): Set<string> =>
 
 export const getSiblings = (personId: string, data: GenealogyDataset = genealogyData): Person[] => {
   const parents = parentIds(personId, data);
-  return data.people.filter((candidate) => {
+  const inferred = data.people.filter((candidate) => {
     const candidateParents = parentIds(candidate.id, data);
     return candidate.id !== personId && parents.size > 0 && candidateParents.size === parents.size && [...parents].every((id) => candidateParents.has(id));
   });
+  const directIds = data.siblingRelationships.flatMap((relationship) =>
+    relationship.personIds.includes(personId) ? relationship.personIds.filter((id) => id !== personId) : [],
+  );
+  return resolve(new Set([...inferred.map((person) => person.id), ...directIds]), data);
 };
 
 export const getHalfSiblings = (personId: string, data: GenealogyDataset = genealogyData): Person[] => {
@@ -67,13 +72,26 @@ export const getPeopleInLineage = (familyId: string, data: GenealogyDataset = ge
       if (union.personAId === current) related.push(union.personBId);
       if (union.personBId === current) related.push(union.personAId);
     });
+    data.siblingRelationships.forEach((relationship) => {
+      if (relationship.personIds[0] === current) related.push(relationship.personIds[1]);
+      if (relationship.personIds[1] === current) related.push(relationship.personIds[0]);
+    });
     related.forEach((id) => { if (!seen.has(id)) { seen.add(id); queue.push(id); } });
   }
   return resolve(seen, data);
 };
 
-export const getLineages = (personId: string, data: GenealogyDataset = genealogyData): Family[] =>
-  families.filter((family) => getPeopleInLineage(family.id, data).some((person) => person.id === personId));
+export const getLineages = (personId: string, data: GenealogyDataset = genealogyData): Family[] => {
+  const heritage = new Set([personId]);
+  const queue = [personId];
+  while (queue.length) {
+    const current = queue.shift()!;
+    getParents(current, data).forEach((parent) => {
+      if (!heritage.has(parent.id)) { heritage.add(parent.id); queue.push(parent.id); }
+    });
+  }
+  return families.filter((family) => (data.lineageSeeds[family.id] ?? []).some((seedId) => heritage.has(seedId)));
+};
 
 export const getGenerations = (members: Person[], data: GenealogyDataset): Person[][] => {
   const memberIds = new Set(members.map((person) => person.id));

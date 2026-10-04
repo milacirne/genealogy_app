@@ -197,7 +197,7 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset):
   return { positions, width: Math.max(width, rightmost + GENEALOGY_LAYOUT.canvasPaddingX), height };
 }
 
-export type SiblingKind = "fullSibling" | "halfSibling";
+export type SiblingKind = "fullSibling" | "halfSibling" | "directSibling";
 export interface SiblingGroup { id: string; personIds: string[]; kind: SiblingKind }
 
 export function deriveSiblingGroups(members: Person[], data: GenealogyDataset): SiblingGroup[] {
@@ -219,6 +219,11 @@ export function deriveSiblingGroups(members: Person[], data: GenealogyDataset): 
   const groups: SiblingGroup[] = [...full.entries()]
     .filter(([, ids]) => ids.length > 1)
     .map(([id, personIds]) => ({ id: `full:${id}`, personIds, kind: "fullSibling" as const }));
+
+  data.siblingRelationships.forEach((relationship, index) => {
+    const personIds = relationship.personIds.filter((id) => memberIds.has(id));
+    if (personIds.length === 2) groups.push({ id: `direct:${index}:${pairKey(personIds)}`, personIds, kind: "directSibling" });
+  });
 
   const fullPairs = new Set(groups.flatMap((group) => group.personIds.flatMap((id, index) => group.personIds.slice(index + 1).map((other) => pairKey([id, other])))));
   const halfEdges = new Map<string, Set<string>>();
