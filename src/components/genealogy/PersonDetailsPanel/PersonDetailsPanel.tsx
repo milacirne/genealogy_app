@@ -38,7 +38,6 @@ export function PersonDetailsPanel({ person, data, onClose }: { person: Person; 
       <h3>{person.firstName} {person.lastName}{person.status === "deceased" && <span aria-hidden="true"> †</span>}</h3>
       <p>{person.type === "playable" ? "Personagem jogável" : "NPC"}{court ? ` · Corte ${court.name}` : ""}</p>
       <dl>
-        <div><dt>Status</dt><dd>{person.status === "deceased" ? "Falecido" : "Vivo"}</dd></div>
         {parents.length > 0 && <div><dt>Pais</dt><dd><ParentNames people={parents} /></dd></div>}
         {children.length > 0 && <div><dt>Filhos</dt><dd><Names people={children} /></dd></div>}
         {lineages.length > 0 && <div><dt>Linhagens</dt><dd className="person-details__lineages">{lineages.map((family, index) => <span key={family.id}>{index > 0 && <span aria-hidden="true">, </span>}{family.id === familyId ? family.name : <Link to={`/families/${family.id}`}>{family.name}</Link>}</span>)}</dd></div>}

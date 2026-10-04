@@ -72,10 +72,6 @@ export const getPeopleInLineage = (familyId: string, data: GenealogyDataset = ge
       if (union.personAId === current) related.push(union.personBId);
       if (union.personBId === current) related.push(union.personAId);
     });
-    data.siblingRelationships.forEach((relationship) => {
-      if (relationship.personIds[0] === current) related.push(relationship.personIds[1]);
-      if (relationship.personIds[1] === current) related.push(relationship.personIds[0]);
-    });
     related.forEach((id) => { if (!seen.has(id)) { seen.add(id); queue.push(id); } });
   }
   return resolve(seen, data);

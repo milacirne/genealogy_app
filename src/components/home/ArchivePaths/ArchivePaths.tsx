@@ -22,7 +22,7 @@ function GenealogySymbol() {
 
 const paths = [
   { to: "/families", title: "Linhagens", description: "Explore as casas, brasões e histórias das famílias das sete Cortes.", action: "Explorar linhagens", symbol: <HeraldrySymbol /> },
-  { to: "/tree", title: "Grande Árvore", description: "Percorra os laços de sangue que conectam famílias e gerações através de Prythian.", action: "Explorar a árvore", symbol: <GenealogySymbol /> },
+  { to: "/tree", title: "A Grande Árvore", description: "Percorra os laços de sangue que conectam famílias e gerações através de Prythian.", action: "Explorar a árvore", symbol: <GenealogySymbol /> },
 ];
 
 export function ArchivePaths() {

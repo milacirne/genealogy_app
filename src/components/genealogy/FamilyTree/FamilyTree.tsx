@@ -14,16 +14,16 @@ const MIN_ZOOM = .6;
 const MAX_ZOOM = 1.6;
 const ZOOM_STEP = .05;
 const VIEWPORT_UI_SAFE_TOP = 72;
+const MOBILE_VIEWPORT_SAFE_LEFT = 20;
 const MOBILE_TREE_QUERY = "(max-width: 640px)";
 
-const getResponsiveBaseScale = () => window.matchMedia(MOBILE_TREE_QUERY).matches ? .6 : 1;
-
-export function FamilyTree({ familyId, data }: { familyId: string; data: GenealogyDataset }) {
-  const members = useMemo(() => getPeopleInLineage(familyId, data), [familyId, data]);
+export function FamilyTree({ familyId, data, scaleMultiplier = 1 }: { familyId?: string; data: GenealogyDataset; scaleMultiplier?: number }) {
+  const members = useMemo(() => familyId ? getPeopleInLineage(familyId, data) : data.people, [familyId, data]);
   const memberIds = useMemo(() => new Set(members.map((person) => person.id)), [members]);
-  const layout = useMemo(() => buildGenealogyLayout(members, data), [members, data]);
+  const layout = useMemo(() => buildGenealogyLayout(members, data, familyId), [members, data, familyId]);
   const [selected, setSelected] = useState<Person>();
-  const [baseScale] = useState(getResponsiveBaseScale);
+  const [isMobile] = useState(() => window.matchMedia(MOBILE_TREE_QUERY).matches);
+  const [baseScale] = useState(() => (isMobile ? .6 : 1) * scaleMultiplier);
   const [zoom, setZoom] = useState(1);
   const effectiveZoom = baseScale * zoom;
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
@@ -42,10 +42,10 @@ export function FamilyTree({ familyId, data }: { familyId: string; data: Genealo
     const bottom = Math.max(...bounds.map((item) => item.top + item.height));
     const usableCenterY = VIEWPORT_UI_SAFE_TOP + (element.clientHeight - VIEWPORT_UI_SAFE_TOP) / 2;
     setPanOffset({
-      x: element.clientWidth / 2 - ((left + right) / 2) * scale,
+      x: isMobile ? MOBILE_VIEWPORT_SAFE_LEFT - left * scale : element.clientWidth / 2 - ((left + right) / 2) * scale,
       y: usableCenterY - ((top + bottom) / 2) * scale,
     });
-  }, [effectiveZoom, layout.positions]);
+  }, [effectiveZoom, isMobile, layout.positions]);
 
   useLayoutEffect(() => {
     if (!layout.positions.size || hasCentered.current) return;

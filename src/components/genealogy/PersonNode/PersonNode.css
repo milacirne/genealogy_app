@@ -1,6 +1,22 @@
 .person-node { --person-accent: var(--silver); display: grid; place-items: center; min-width: 12.5rem; min-height: 4rem; padding: .62rem 1rem; border: 1px solid color-mix(in srgb, var(--person-accent) 72%, var(--border)); background: color-mix(in srgb, var(--surface-solid) 94%, var(--person-accent)); box-shadow: inset 0 0 0 3px var(--background); color: var(--text); text-align: center; cursor: pointer; transition: border-color var(--transition), background-color var(--transition); }
 .person-node:hover, .person-node[aria-pressed="true"] { border-color: var(--person-accent); background: color-mix(in srgb, var(--surface-solid) 88%, var(--person-accent)); }
-.person-node--playable { border-radius: 1.5rem; }
+.person-node--playable {
+  border-color: color-mix(in srgb, var(--person-accent) 90%, var(--border));
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--surface-solid) 86%, var(--person-accent));
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--background) 90%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--person-accent) 18%, transparent),
+    0 5px 16px color-mix(in srgb, var(--person-accent) 12%, transparent);
+}
+.person-node--playable:hover, .person-node--playable[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--surface-solid) 78%, var(--person-accent));
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--background) 86%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--person-accent) 28%, transparent),
+    0 6px 18px color-mix(in srgb, var(--person-accent) 18%, transparent);
+}
+.person-node--playable .person-node__name { font-size: .86rem; font-weight: 600; }
 .person-node--npc { border-radius: .12rem; }
 .person-node__name { font-family: var(--font-display); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; }
 .person-node__deceased { color: var(--silver); }

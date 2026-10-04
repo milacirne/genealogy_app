@@ -35,7 +35,7 @@ interface FamilyUnit {
 
 const pairKey = (ids: string[]) => [...ids].sort().join("|");
 
-export function buildGenealogyLayout(members: Person[], data: GenealogyDataset): GenealogyLayout {
+export function buildGenealogyLayout(members: Person[], data: GenealogyDataset, focusFamilyId?: string): GenealogyLayout {
   if (!members.length) return { positions: new Map(), width: GENEALOGY_LAYOUT.minimumCanvasWidth, height: GENEALOGY_LAYOUT.minimumCanvasHeight };
   const memberIds = new Set(members.map((person) => person.id));
   const units = new Map<string, FamilyUnit>();
@@ -102,7 +102,55 @@ export function buildGenealogyLayout(members: Person[], data: GenealogyDataset):
   };
 
   const roots = [...units.values()].filter((unit) => !incoming.get(unit.id)?.size);
-  const fallbackRoots = roots.length ? roots : [...units.values()];
+  let fallbackRoots = roots.length ? roots : [...units.values()];
+  const focusIds = new Set(focusFamilyId ? data.lineageSeeds[focusFamilyId] ?? [] : []);
+  if (!focusFamilyId) {
+    const rootByPerson = new Map<string, string>();
+    fallbackRoots.forEach((unit) => unit.personIds.forEach((personId) => rootByPerson.set(personId, unit.id)));
+    const adjacency = new Map<string, Set<string>>();
+    data.siblingRelationships.forEach(({ personIds }) => {
+      const firstRoot = rootByPerson.get(personIds[0]);
+      const secondRoot = rootByPerson.get(personIds[1]);
+      if (!firstRoot || !secondRoot || firstRoot === secondRoot) return;
+      if (!adjacency.has(firstRoot)) adjacency.set(firstRoot, new Set());
+      if (!adjacency.has(secondRoot)) adjacency.set(secondRoot, new Set());
+      adjacency.get(firstRoot)!.add(secondRoot);
+      adjacency.get(secondRoot)!.add(firstRoot);
+    });
+    const endpoint = [...fallbackRoots].reverse().find((unit) => adjacency.get(unit.id)?.size === 1);
+    if (endpoint) {
+      const ordered: FamilyUnit[] = [];
+      const visited = new Set<string>();
+      let current: FamilyUnit | undefined = endpoint;
+      while (current) {
+        ordered.push(current);
+        visited.add(current.id);
+        const nextId = [...(adjacency.get(current.id) ?? [])].find((id) => !visited.has(id));
+        current = nextId ? units.get(nextId) : undefined;
+      }
+      fallbackRoots = [...ordered, ...fallbackRoots.filter((unit) => !visited.has(unit.id))];
+    }
+
+    fallbackRoots.forEach((unit, index) => {
+      if (unit.personIds.length !== 2) return;
+      const leftRoot = fallbackRoots[index - 1];
+      const rightRoot = fallbackRoots[index + 1];
+      const siblingFacing = (neighbor?: FamilyUnit) => neighbor && data.siblingRelationships.find(({ personIds }) =>
+        personIds.some((id) => unit.personIds.includes(id)) && personIds.some((id) => neighbor.personIds.includes(id)))?.personIds.find((id) => unit.personIds.includes(id));
+      const leftPerson = siblingFacing(leftRoot);
+      const rightPerson = siblingFacing(rightRoot);
+      if (leftPerson && rightPerson) unit.personIds = [leftPerson, rightPerson];
+      else if (leftPerson) unit.personIds = [leftPerson, ...unit.personIds.filter((id) => id !== leftPerson)];
+      else if (rightPerson) unit.personIds = [...unit.personIds.filter((id) => id !== rightPerson), rightPerson];
+    });
+  }
+  fallbackRoots.forEach((unit, index) => {
+    if (unit.personIds.length !== 2) return;
+    const focusPerson = unit.personIds.find((id) => focusIds.has(id));
+    if (!focusPerson) return;
+    const partner = unit.personIds.find((id) => id !== focusPerson)!;
+    unit.personIds = index < fallbackRoots.length / 2 ? [partner, focusPerson] : [focusPerson, partner];
+  });
   const forestWidth = fallbackRoots.reduce((sum, unit) => sum + subtreeWidth(unit.id), 0)
     + Math.max(0, fallbackRoots.length - 1) * GENEALOGY_LAYOUT.siblingGap;
   const width = Math.max(GENEALOGY_LAYOUT.minimumCanvasWidth, forestWidth + GENEALOGY_LAYOUT.canvasPaddingX * 2);
